@@ -1,0 +1,3 @@
+http://akka.io/
+http://doubledata.ru/technology.html
+https://github1.com/akka/akka

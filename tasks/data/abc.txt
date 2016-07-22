@@ -1,0 +1,5 @@
+http://doubledata.ru/css/style.css
+http://doubledata.ru/css/fonts/opensansb.ttf
+http://doubledata1.ru/css/style.css
+http://doubledata.ru/css/fonts/opensansn.ttf
+https://mc.yandex.ru/metrika/watch.js
