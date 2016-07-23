@@ -1,4 +1,4 @@
-name := "collector"
+name := "grabber"
 
 version := "1.0"
 
