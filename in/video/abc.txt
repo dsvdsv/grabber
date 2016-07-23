@@ -1,0 +1,3 @@
+http://doubledata.ru/css/fonts/opensans.ttf
+http://doubledata.ru/css/fonts/opensansb.ttf
+http://doubledata.1ru/css/fonts/opensansn.ttf
