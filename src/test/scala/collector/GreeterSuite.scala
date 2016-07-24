@@ -11,15 +11,15 @@ import scala.util.Success
 
 class GreeterSuite extends AkkaSpec with DefaultTimeout with ImplicitSender {
 
-  "demonstrate testing of behavior" in {
+  it should "demonstrate testing of behavior" in {
     println(new java.io.File( "." ).getCanonicalPath())
     val actorRef = TestActorRef(new Greeter)
     val future = actorRef ? Greeter.Greet
     val Success(result: Any) = future.value.get
-    result should be(Greeter.Done)
+    assert(result == Greeter.Done)
   }
 
-  "demonstrate testing url matching" in {
+  it should "demonstrate testing url matching" in {
     val URL = """(http|https)://(.*)\.([a-z]+)""".r
 
     def splitURL(url : String) = url match {

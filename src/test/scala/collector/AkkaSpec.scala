@@ -1,9 +1,10 @@
 package collector
 
 import akka.actor.ActorSystem
+import akka.stream.ActorMaterializer
 import akka.testkit.TestKit
 import org.scalatest.concurrent.ScalaFutures
-import org.scalatest.{BeforeAndAfterAll, Matchers, WordSpecLike}
+import org.scalatest.{BeforeAndAfterAll, FlatSpecLike, Matchers, WordSpecLike}
 
 object AkkaSpec {
   def getCallerName(clazz: Class[_]): String = {
@@ -18,7 +19,9 @@ object AkkaSpec {
 }
 
 abstract class AkkaSpec(_system: ActorSystem)
-  extends TestKit(_system) with WordSpecLike with Matchers with BeforeAndAfterAll with ScalaFutures{
+  extends TestKit(_system) with FlatSpecLike with Matchers with BeforeAndAfterAll with ScalaFutures{
+
+  implicit val materializer = ActorMaterializer()
 
   implicit val patience = PatienceConfig(testKitSettings.DefaultTimeout.duration)
 
