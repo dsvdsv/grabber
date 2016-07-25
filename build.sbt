@@ -21,5 +21,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.akka" %% "akka-http-testkit" % akkaVersion % "test"
 )
 
-mainClass in Compile := Some("collector.Main")
+mainClass in Compile := Some("grabber.Main")
+
+cleanFiles <+= baseDirectory { base => base / "out" }
     

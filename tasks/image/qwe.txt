@@ -1,3 +1,0 @@
-http://doubledata.ru/img/header/logo.png
-http://doubledata.ru/img/content/checkmark.png
-http://doubledata.ru/img/footer/Double%20Data.png

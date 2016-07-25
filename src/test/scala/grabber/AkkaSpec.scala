@@ -1,4 +1,4 @@
-package collector
+package grabber
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
