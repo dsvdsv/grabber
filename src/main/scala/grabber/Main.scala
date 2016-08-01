@@ -29,18 +29,18 @@ object Main extends App {
 
   val dirs = subdirectories(in)
 
-  val sources = dirs.map(flow)
+  val sources = dirs.map(flow(_, out))
 
   Future.sequence(
     sources
       .map(_.runForeach(println))
-  ).onComplete(_ => system.shutdown())
+  ).onComplete(_ => system.terminate())
 
 
-  def flow(dir: File) = {
-    val outFile = createOutFile(out.getPath, dir.getName)
+  def flow(inDir: File, outDir: File) = {
+    val outFile = createOutFile(outDir.getPath, inDir.getName)
 
-    Source(files(dir))
+    Source(files(inDir))
       .flatMapConcat { f =>
         FileIO.fromPath(f.toPath)
           .concat(Source.single(lineDelimiter))

@@ -27,7 +27,7 @@ abstract class AkkaSpec(_system: ActorSystem)
 
   def this() = this(ActorSystem(AkkaSpec.getCallerName(getClass)))
 
-  final override def afterAll: Unit = {
+  override protected def afterAll: Unit = {
     shutdown()
   }
 }
