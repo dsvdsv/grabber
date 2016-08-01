@@ -18,11 +18,14 @@ object Main extends App {
 
   import system.dispatcher
 
-  implicit val materializer = ActorMaterializer()
+  implicit val mat = ActorMaterializer()
+
   val http = Http(system)
 
-  val in = new File("in")
-  val out = new File("out")
+  val config = system.settings.config.getConfig("grabber")
+
+  val in = new File(config.getString("in"))
+  val out = new File(config.getString("out"))
 
   val dirs = subdirectories(in)
 
