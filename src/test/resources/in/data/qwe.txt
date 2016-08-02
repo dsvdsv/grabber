@@ -1,0 +1,3 @@
+http://localhost:9000/resource/7
+http://localhost:9000/resource/8
+http://localhost:9001/resource/9

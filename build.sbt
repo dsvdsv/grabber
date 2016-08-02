@@ -18,7 +18,8 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "2.2.6" % "test",
   "com.typesafe.akka" %% "akka-stream-testkit" % akkaVersion % "test",
   "com.typesafe.akka" %% "akka-testkit" % akkaVersion % "test",
-  "com.typesafe.akka" %% "akka-http-testkit" % akkaVersion % "test"
+  "com.typesafe.akka" %% "akka-http-testkit" % akkaVersion % "test",
+  "commons-io" % "commons-io" % "2.5" % "test"
 )
 
 mainClass in Compile := Some("grabber.Main")
