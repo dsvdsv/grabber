@@ -68,8 +68,6 @@ class AppSpec extends AkkaSpec with BeforeAndAfterAll with DefaultTimeout with I
 
   "A crawler" should "correct download all resources" in {
 
-    val http = Http(system)
-
     val result = Crawler.flow(in, out)
       .runForeach(println)
 
