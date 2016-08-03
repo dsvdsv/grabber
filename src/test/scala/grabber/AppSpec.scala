@@ -26,6 +26,7 @@ class AppSpec extends AkkaSpec with BeforeAndAfterAll with DefaultTimeout with I
   val out = new File("target/out")
 
   import system.dispatcher
+
   val applyingTimeouts = new CopyOnWriteArraySet[Int]
   var binding: ServerBinding = _
 
@@ -91,21 +92,21 @@ class AppSpec extends AkkaSpec with BeforeAndAfterAll with DefaultTimeout with I
       val bytes = Files.readAllBytes(outDir.listFiles()(0).toPath)
 
       // check file size
-      // in directory have 8 valid urls
+      // we have 8 valid urls
       bytes should have length (resourceSize * 8)
 
       // check file content
-      (bytes.count(_ == 11)) should equal (resourceSize) // http://localhost:9000/resource/11?timeout=true
-      (bytes.count(_ == 12)) should equal (resourceSize) // http://localhost:9000/resource/12?timeout=true
-      (bytes.count(_ == 3)) should equal (resourceSize)  // http://localhost:9000/resource/3?timeout=true
+      (bytes.count(_ == 11)) should equal(resourceSize) // http://localhost:9000/resource/11?timeout=true
+      (bytes.count(_ == 12)) should equal(resourceSize) // http://localhost:9000/resource/12
+      (bytes.count(_ == 3)) should equal(resourceSize) // http://localhost:9000/resource/3
 
-      (bytes.count(_ == 4)) should equal (resourceSize) // http://localhost:9000/resource/4?timeout=true
-      (bytes.count(_ == 5)) should equal (resourceSize) // http://localhost:9000/resource/5?timeout=true
-      (bytes.count(_ == 6)) should equal (resourceSize) // http://localhost:9000/resource/6?timeout=true
+      (bytes.count(_ == 4)) should equal(resourceSize) // http://localhost:9000/resource/4
+      (bytes.count(_ == 5)) should equal(resourceSize) // http://localhost:9000/resource/5
+      (bytes.count(_ == 6)) should equal(resourceSize) // http://localhost:9000/resource/6
 
-      (bytes.count(_ == 7)) should equal (resourceSize) // http://localhost:9000/resource/7?timeout=true
-      (bytes.count(_ == 8)) should equal (resourceSize) // http://localhost:9000/resource/8?timeout=true
-      (bytes.count(_ == 9)) should equal (0)  // invalid url http://localhost:9000/resource/9?timeout=true
+      (bytes.count(_ == 7)) should equal(resourceSize) // http://localhost:9000/resource/7
+      (bytes.count(_ == 8)) should equal(resourceSize) // http://localhost:9000/resource/8
+      (bytes.count(_ == 9)) should equal(0) // invalid url http://localhost:9001/resource/9
     }
 
   }
