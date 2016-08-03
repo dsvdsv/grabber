@@ -6,7 +6,8 @@ import java.nio.file.{Files, Path, Paths, StandardOpenOption}
 import java.time.LocalDate
 import java.time.temporal.ChronoField._
 
-import akka.http.scaladsl.HttpExt
+import akka.actor.ActorSystem
+import akka.http.scaladsl.{Http, HttpExt}
 import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import akka.stream.Materializer
 import akka.stream.scaladsl.{FileIO, Framing, Source}
@@ -45,7 +46,12 @@ object Crawler {
     Files.createTempFile(Files.createDirectories(path), "file", ".bin")
   }
 
-  def flow(inDir: File, outDir: File, http:HttpExt)(implicit fm: Materializer, executor: ExecutionContext) = {
+  def flow(inDir: File, outDir: File)(implicit system: ActorSystem, fm: Materializer) = {
+
+    import system.dispatcher
+
+    val http = Http(system)
+
     val outFile = createOutFile(outDir.getPath, inDir.getName)
 
     Source(files(inDir))

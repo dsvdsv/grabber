@@ -69,7 +69,7 @@ class AppSpec extends AkkaSpec with BeforeAndAfterAll with DefaultTimeout with I
 
     val http = Http(system)
 
-    val result = Crawler.flow(in, out, http)
+    val result = Crawler.flow(in, out)
       .runForeach(println)
 
     whenReady(result) { r =>

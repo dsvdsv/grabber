@@ -15,8 +15,6 @@ object Main extends App {
 
   implicit val mat = ActorMaterializer()
 
-  val http1: HttpExt = Http(system)
-
   val config = system.settings.config.getConfig("grabber")
 
   val in = new File(config.getString("in"))
@@ -24,7 +22,7 @@ object Main extends App {
 
   val dirs = Crawler.subdirectories(in)
 
-  val sources = dirs.map(Crawler.flow(_, out, http1))
+  val sources = dirs.map(Crawler.flow(_, out))
 
   Future.sequence(
     sources
