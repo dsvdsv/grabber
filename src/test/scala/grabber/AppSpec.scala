@@ -1,13 +1,12 @@
 package grabber
 
 import java.io.File
-import java.nio.file.{Files, Path, Paths}
+import java.nio.file.{Files, Paths}
 import java.time.LocalDate
 import java.time.temporal.ChronoField
 import java.util.concurrent.CopyOnWriteArraySet
 
-import akka.Done
-import akka.http.scaladsl.{Http, HttpExt}
+import akka.http.scaladsl.Http
 import akka.http.scaladsl.Http.ServerBinding
 import akka.http.scaladsl.model.{ContentTypes, HttpEntity}
 import akka.http.scaladsl.server.Directives._
@@ -27,20 +26,17 @@ class AppSpec extends AkkaSpec with BeforeAndAfterAll with DefaultTimeout with I
   val out = new File("target/out")
 
   import system.dispatcher
-
-  var binding: ServerBinding = _
-
   val applyingTimeouts = new CopyOnWriteArraySet[Int]
-
-  def byteString(n:Byte) = ByteString(Vector.fill(resourceSize)(n): _*)
+  var binding: ServerBinding = _
 
   override protected def beforeAll(): Unit = {
     super.beforeAll()
 
+    // delete out dir
     FileUtils.deleteDirectory(out)
 
     binding = Http().bindAndHandle({
-      path("resource" / IntNumber) {  num =>
+      path("resource" / IntNumber) { num =>
         get {
           parameters("timeout" ? false) { timeout =>
             val source = Source.single(byteString(num.toByte))
@@ -57,24 +53,28 @@ class AppSpec extends AkkaSpec with BeforeAndAfterAll with DefaultTimeout with I
     }, interface = "localhost", port = 9000).futureValue
   }
 
+  def byteString(n: Byte) = ByteString(Vector.fill(resourceSize)(n): _*)
+
   override protected def afterAll(): Unit = {
     super.afterAll()
 
+    // delete out dir
     FileUtils.deleteDirectory(out)
 
     binding.unbind().futureValue
 
   }
 
-  "A flow" should "correct downloaded all resources" in {
+  "A crawler" should "correct download all resources" in {
 
     val http = Http(system)
 
-    val result = grabber.flow(in, out, http)
-      .runForeach( println )
+    val result = Crawler.flow(in, out, http)
+      .runForeach(println)
 
     whenReady(result) { r =>
 
+      // check structure of subdirectories
       val now = LocalDate.now()
 
       val outDir = Paths.get(
@@ -87,18 +87,26 @@ class AppSpec extends AkkaSpec with BeforeAndAfterAll with DefaultTimeout with I
 
       assert(outDir.exists() == true)
 
-      val file = outDir.listFiles()(0)
+      // load all bytes from file
+      val bytes = Files.readAllBytes(outDir.listFiles()(0).toPath)
 
-      assert(file.exists() == true)
+      // check file size
+      // in directory have 8 valid urls
+      bytes should have length (resourceSize * 8)
 
+      // check file content
+      (bytes.count(_ == 11)) should equal (resourceSize) // http://localhost:9000/resource/11?timeout=true
+      (bytes.count(_ == 12)) should equal (resourceSize) // http://localhost:9000/resource/12?timeout=true
+      (bytes.count(_ == 3)) should equal (resourceSize)  // http://localhost:9000/resource/3?timeout=true
 
-      checkFileContents(file.toPath, "")
+      (bytes.count(_ == 4)) should equal (resourceSize) // http://localhost:9000/resource/4?timeout=true
+      (bytes.count(_ == 5)) should equal (resourceSize) // http://localhost:9000/resource/5?timeout=true
+      (bytes.count(_ == 6)) should equal (resourceSize) // http://localhost:9000/resource/6?timeout=true
+
+      (bytes.count(_ == 7)) should equal (resourceSize) // http://localhost:9000/resource/7?timeout=true
+      (bytes.count(_ == 8)) should equal (resourceSize) // http://localhost:9000/resource/8?timeout=true
+      (bytes.count(_ == 9)) should equal (0)  // invalid url http://localhost:9000/resource/9?timeout=true
     }
 
-  }
-
-  def checkFileContents(f: Path, contents: String): Unit = {
-    val out = Files.readAllBytes(f)
-    out should contain (byteString(3).toArray)
   }
 }

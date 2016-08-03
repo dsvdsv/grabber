@@ -1,12 +1,13 @@
+package grabber
+
 import java.io.File
 import java.net.URL
 import java.nio.file.{Files, Path, Paths, StandardOpenOption}
 import java.time.LocalDate
-import java.time.temporal.ChronoField
-import java.time.temporal.ChronoField.{DAY_OF_MONTH, MONTH_OF_YEAR, YEAR}
+import java.time.temporal.ChronoField._
 
 import akka.http.scaladsl.HttpExt
-import akka.http.scaladsl.model.HttpRequest
+import akka.http.scaladsl.model.{HttpRequest, HttpResponse}
 import akka.stream.Materializer
 import akka.stream.scaladsl.{FileIO, Framing, Source}
 import akka.util.ByteString
@@ -14,7 +15,8 @@ import akka.util.ByteString
 import scala.concurrent.ExecutionContext
 import scala.util.Try
 
-package object grabber {
+object Crawler {
+
   val lineDelimiter = ByteString("\n")
 
   def subdirectories(dir: File): List[File] = {
@@ -61,6 +63,11 @@ package object grabber {
       }
       .mapAsyncUnordered(4) { url =>
         http.singleRequest(HttpRequest(uri = url.toString))
+          .recover {
+            case ex =>
+              println(s"$url is not available ${ex.toString}")
+              HttpResponse()
+          }
           .flatMap { response =>
             response.entity.dataBytes
               .runWith(FileIO.toPath(outFile, Set(StandardOpenOption.APPEND)))
